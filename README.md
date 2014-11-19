@@ -66,6 +66,7 @@ Then, whenever you'd like to log something, use one of the convenience methods:
 log.verbose("A verbose message, usually useful when working on a specific problem")
 log.debug("A debug message")
 log.info("An info message, probably useful to power users looking in console.app")
+log.warning("A warning message, may indicate a possible error")
 log.error("An error occurred, but it's recoverable, just info about what happened")
 log.severe("A severe error occurred, we are likely about to crash now")
 ```
@@ -104,7 +105,7 @@ log.debugExec {
 ```
 
 There are convenience methods for each log level:
-```verboseExec```, ```debugExec```, ```infoExec```, ```errorExec```, ```severeExec```
+```verboseExec```, ```debugExec```, ```infoExec```, ```warningExec```, ```errorExec```, ```severeExec```
 
 ###To Do
 - Add examples of some advanced use cases
@@ -116,13 +117,14 @@ If you find this library helpful, you'll definitely find these other tools helpf
 
 Watchdog: http://watchdogforxcode.com/
 
-Slender: http://dragonforged.com/slender/
+Slender: http://martiancraft.com/products/slender
 
 Briefs: http://giveabrief.com/
 
 
 ###Change Log
 
+* **Version 1.8**: *(2014/11/16)* - Added warning log level (Issue #16)
 * **Version 1.7**: *(2014/09/27)* - Reorganized to be used as a subproject instead of a framework, fixed threading
 * **Version 1.6**: *(2014/09/09)* - Updated for Xcode 6.1 Beta 1
 * **Version 1.5**: *(2014/08/23)* - Updated for Xcode 6 Beta 6

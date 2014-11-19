@@ -14,7 +14,11 @@ private extension NSThread {
 
         let localeToUse = locale ?? NSLocale.currentLocale()
 
-        if let threadDictionary = NSThread.currentThread().threadDictionary {
+        // These next two lines are a bit of a hack to handle the fact that .threadDictionary changed from an optional to a non-optional between Xcode 6.1 and 6.1.1
+        // This lets us use the same (albeit ugly) code in both cases.
+        // TODO: Clean up at some point after 6.1.1 is officially released.
+        let threadDictionary: NSMutableDictionary? = NSThread.currentThread().threadDictionary
+        if let threadDictionary = threadDictionary {
             var dataFormatterCache: [String:NSDateFormatter]? = threadDictionary.objectForKey(XCGLogger.constants.nsdataFormatterCacheIdentifier) as? [String:NSDateFormatter]
             if dataFormatterCache == nil {
                 dataFormatterCache = [String:NSDateFormatter]()
@@ -285,7 +289,7 @@ public class XCGLogger : DebugPrintable {
         public static let baseFileLogDestinationIdentifier = "com.cerebralgardens.xcglogger.logdestination.file"
         public static let nsdataFormatterCacheIdentifier = "com.cerebralgardens.xcglogger.nsdataFormatterCache"
         public static let logQueueIdentifier = "com.cerebralgardens.xcglogger.queue"
-        public static let versionString = "1.7"
+        public static let versionString = "1.8"
     }
 
     // MARK: - Enums
@@ -293,6 +297,7 @@ public class XCGLogger : DebugPrintable {
         case Verbose
         case Debug
         case Info
+        case Warning
         case Error
         case Severe
         case None
@@ -305,6 +310,8 @@ public class XCGLogger : DebugPrintable {
                     return "Debug"
                 case .Info:
                     return "Info"
+                case .Warning:
+                    return "Warning"
                 case .Error:
                     return "Error"
                 case .Severe:
@@ -478,6 +485,14 @@ public class XCGLogger : DebugPrintable {
         self.logln(logMessage, logLevel: .Info, functionName: functionName, fileName: fileName, lineNumber: lineNumber)
     }
 
+    public class func warning(logMessage: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+        self.defaultInstance().warning(logMessage, functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+    }
+
+    public func warning(logMessage: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+        self.logln(logMessage, logLevel: .Warning, functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+    }
+    
     public class func error(logMessage: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
         self.defaultInstance().error(logMessage, functionName: functionName, fileName: fileName, lineNumber: lineNumber)
     }
@@ -518,6 +533,14 @@ public class XCGLogger : DebugPrintable {
         self.exec(logLevel: XCGLogger.LogLevel.Info, closure: closure)
     }
     
+    public class func warningExec(closure: () -> () = {}) {
+        self.defaultInstance().exec(logLevel: XCGLogger.LogLevel.Warning, closure: closure)
+    }
+
+    public func warningExec(closure: () -> () = {}) {
+        self.exec(logLevel: XCGLogger.LogLevel.Warning, closure: closure)
+    }
+
     public class func errorExec(closure: () -> () = {}) {
         self.defaultInstance().exec(logLevel: XCGLogger.LogLevel.Error, closure: closure)
     }
